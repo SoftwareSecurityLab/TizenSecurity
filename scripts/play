@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+(cd Analyser && node ./node_modules/jalangi2/src/js/commands/jalangi.js --inlineIID --inlineSource --analysis bin/Analyser.js "${@:1}")
