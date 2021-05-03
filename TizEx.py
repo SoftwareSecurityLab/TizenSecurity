@@ -63,11 +63,13 @@ def check_entry_point(entry_points, variable):
     return False
      
 
-def handle_variable_declaration(declaration_string, regex_declaration, entry_points):
+def handle_variable_declaration(declaration_string, regex_declaration, entry_points, fin, fout):
     # params:
     # declaration_string is a string of JS variable declaration: e.g: var a, b = c = 30, d;
     # regex_declaration is a compiled regex object with pattern of declaration variables in JS
     # entry_points is a list of strings of variables which are possibly the entrypoint of code, e.g: document
+    # fin is the file handler of input file
+    # fout is the file handler of output file 
     
     assert(type(regex_declaration) == re.Pattern)
     assert(type(declaration_string) == str)
@@ -75,7 +77,7 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
     match_result = regex_declaration.match(declaration_string)
     if not match_result:
         # not a declaration statement
-        return None
+        return False
     
     declaration_string = declaration_string.replace(';', '')
 
@@ -117,8 +119,8 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
         to_print += ' ,'
         
     to_print = to_print[:-1] + ';'
-    return to_print + '\n' + conditional_string
-
+    print(to_print + '\n' + conditional_string, file=fout)
+    return True
 
 
 if __name__ == '__main__':
@@ -150,7 +152,7 @@ if __name__ == '__main__':
         
         decalre_res = handle_variable_declaration(line, declare_reg, entry_points)
         if decalre_res:
-            print(decalre_res, file=file_out)
+            pass
         else:
             print(line, file=file_out)
 
