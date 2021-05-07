@@ -57,8 +57,8 @@ def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ff
         line = re.sub(r'^\s*(var |const |let )', '', line)
         line = line.split('=')
         func_name = line[0].strip()
-        func_name_idx = line[1].find('function ') + 9
-        func_prototype = line[1][: func_name_idx] + func_name + ' ' + line[1][func_name_idx:]
+        func_name_idx = line[1].find('function') + 8
+        func_prototype = line[1][: func_name_idx] + ' ' + func_name + line[1][func_name_idx:]
         line = func_prototype
 
     status, idx = _handle_curly_braces(stack, line)
