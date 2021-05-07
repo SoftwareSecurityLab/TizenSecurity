@@ -35,3 +35,4 @@ cache/
 tests/DOM/*_test.js
 tests/DOM/*_test_temp.js
 .vscode
+TizEx/venv
