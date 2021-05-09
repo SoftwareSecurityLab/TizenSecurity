@@ -2,30 +2,6 @@ import re
 import io
 from shared import *
 
-def _handle_curly_braces(stack, line):
-    # gets a line and a stack. checks the matches between curly braces. e.g:
-    # stack=['{', '{']  ,  line='if (a > b) {'    =>   stack changes to ['{', '{', '{']
-    # stack=['{', '{']  ,  line='if (a > b) {}'    =>   stack doesn't change
-    # stack=['{', '{']  ,  line='} else'    =>   stack changes to ['{']
-
-    open_idx = line.find('{')   
-    close_idx = line.find('}')
-    
-    while open_idx != -1 or close_idx != -1:
-        if (open_idx != -1 and close_idx == -1) or (open_idx != -1 and open_idx < close_idx):
-            stack.append('{')
-            open_idx = line.find('{', open_idx + 1)
-        if (open_idx == -1 and close_idx != -1) or (close_idx != -1 and close_idx < open_idx):
-            if len(stack) == 0:
-                raise ValueError('JS syntax code is wrong!')
-            stack.pop(-1)
-            if (len(stack) == 0):
-                # curly braces match since stack is created
-                return True, close_idx
-            close_idx = line.find('}', close_idx + 1)
-
-    return False, -1
-
 
 def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ffuncs):
     # params:
@@ -61,7 +37,7 @@ def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ff
         func_prototype = line[1][: func_name_idx] + ' ' + func_name + line[1][func_name_idx:]
         line = func_prototype
 
-    status, idx = _handle_curly_braces(stack, line)
+    status, idx = balance_pairs(stack, line, '{', '}')
     if status:
         print(line[:idx + 1], file=ffuncs)
         return True
@@ -71,7 +47,7 @@ def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ff
 
     # storing everything between two { and } in the temp file
     for line in fin:
-        status, idx = _handle_curly_braces(stack, line)
+        status, idx = balance_pairs(stack, line, '{', '}')
         if status:
             # curly braces matched
             print(line[:idx + 1], file=ffuncs)
