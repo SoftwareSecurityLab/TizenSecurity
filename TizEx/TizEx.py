@@ -3,7 +3,8 @@ import subprocess
 from variable_declaration import *
 from functions import *
 from shared import *
-from html5print import JSBeautifier 
+from html5print import JSBeautifier
+from function_call import * 
 
 # TODO:
 # 1. fixing the method of saving JS varirables
@@ -66,20 +67,25 @@ if __name__ == '__main__':
     file_out = open(new_file_name, 'w')    # new file
     functions_tmp = open(functions_tmp_file_name, 'w')
 
-    init(file_in, file_out)
+    init(file_in, file_out)  # this function creates a tmp file which beautified version of original code
 
     file_in_tmp = open(input_tmp_file, 'r') 
 
     entry_points = ['document']  # can have other variables
-    status = True
+    func_calls = dict()
+    # status = True
 
     variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\']*)(\s*=\s*([^,;])*)?\s*);'
     assigned_function_pattern = r'\s*(var |let |cont )?\s*\S+\s*=\s*function\s*'
     normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
+    functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*' 
+    # of course this regex doesn't match only function calls part. regular expressions can't match balanced strings
+    # i.e. function calls must have balanced parantheses.we should check that in the code 
 
     declare_reg = re.compile(variable_declaration_pattern) 
     assigned_func_reg = re.compile(assigned_function_pattern)
     normal_func_reg = re.compile(normal_function_pattern)
+    func_call_regex = re.compile(functions_call_pattern)
 
     for line in file_in_tmp:
         # for each line in js code
@@ -92,13 +98,14 @@ if __name__ == '__main__':
         
         decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
         func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp)
-
         if func_res:
             pass
         elif decalre_res:
             pass
         else:
             print(line, file=file_out)
+
+        handle_function_call(line, func_call_regex, entry_points, func_calls)
 
 
 
@@ -127,7 +134,7 @@ if __name__ == '__main__':
 
     print(new_file_name)
 
-    # subprocess.run(['../expoSE', new_file_name])
+    subprocess.run(['../expoSE', new_file_name])
 
 
     
