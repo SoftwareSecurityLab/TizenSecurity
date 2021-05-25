@@ -5,7 +5,7 @@
   "main": "lib/S$/src/symbols.js",
   "author": "Blake Loring",
   "engines": {
-    "node": "^10.22.0"
+    "node": "^14.16.1"
   },
   "scripts": {
     "start": "./expoSE ui",
@@ -13,14 +13,13 @@
     "postinstall": "./scripts/setup/setup"
   },
   "dependencies": {
+    "browserify": "^14.1.0",
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babel-plugin-strip-function-call": "^1.0.2",
     "babel-preset-2017": "0.0.0",
-    "bash": "0.0.1",
-    "browserify": "^14.1.0",
-    "z3javascript": "git+ssh://git@github.com/ExpoSEJS/z3javascript.git"
+    "bash": "0.0.1"
   },
   "devDependencies": {
     "eslint": "^5.6.0"
