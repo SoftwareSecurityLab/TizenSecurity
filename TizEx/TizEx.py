@@ -38,20 +38,62 @@ def init(fin, fout):
     if not isinstance(fin, io.IOBase) or not isinstance(fout, io.IOBase):
         raise ValueError('f must be a file!')
 
-    initial_code = (
-        "var S$ = require('S$');\n"
-        'document = {',
-        '   getElementById: function (name) {',
-        '       return S$.symbol(name, {});',
-        '   }',
-        '}'
-    )
+    initial_code = '''
+    var S$ = require('S$');\n
+    document = {
+        getElementById: function (name) {
+            return S$.symbol(name, {});
+        }
+    }\n 
+    class Promise {
+        static increaseCount() {
+            this.count++;
+        }
 
+        constructor(callBack, init='') {
+            Promise.increaseCount();
+            this.status = Array();
+            function resolved(a) {
+                this.status.push('fullfilled');
+                this.resolved_return = a;
+            }
+
+            function rejected(a) {
+                this.status.push('rejected');
+                this.rejected_return = a;
+            }
+            this.resolved_bind = resolved.bind(this);
+            this.rejected_bind = rejected.bind(this);
+            this.result = S$.symbol('Promise' + Promise.count, init);
+            callBack(this.resolved_bind, this.rejected_bind);
+            this.final_status = this.status[0];
+        }
+
+        then(onSuccess, onFailure=undefined){
+            if (this.final_status == 'fullfilled') {
+                onSuccess(this.result);
+            } else {
+                onFailure(this.result);   // there will be an error if onFailure is not defined!
+            }
+            return this;
+        }
+
+    };
+    Promise.count = 0;
+
+    function fetch(url) {
+        return new Promise(function(res, rej) {
+            res('abc');
+            rej('def');
+        })
+    }
+
+    '''
     
     # beautifying code
     subprocess.run(f'html5-print -t js -o tmp {fin.name}'.split())
 
-    print('\n'.join(initial_code), file=fout)
+    print(initial_code, file=fout)
      
 
 
@@ -95,7 +137,8 @@ if __name__ == '__main__':
         # declaration_result = declare_reg.match(line):
         # if declaration_result:
             # declaration statement
-        
+        if line.strip().startswith('//'):
+            continue
         decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
         func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp)
         if func_res:
@@ -124,14 +167,16 @@ if __name__ == '__main__':
         # if status:
         #     print('='.join(line), file=file_out)
         # status = True
+    
+
 
     file_in.close()
     file_out.close()
     file_in_tmp.close()
-    # os.remove(input_tmp_file)
 
     print(entry_points)
 
+    print(func_calls)
     print(new_file_name)
 
     subprocess.run(['../expoSE', new_file_name])
