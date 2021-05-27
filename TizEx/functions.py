@@ -1,9 +1,10 @@
 import re
 import io
 from shared import *
+from function_call import *
 
 
-def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ffuncs):
+def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ffuncs, func_calls, func_call_regex, entry_points):
     # params:
     # line: current line which is reading from input file
     # assigned_func_regex: a compiled regex for functions that are assigned to a variable: e.g var a = function(){} 
@@ -47,6 +48,7 @@ def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ff
 
     # storing everything between two { and } in the temp file
     for line in fin:
+        handle_function_call(line, func_call_regex, entry_points, func_calls)
         status, idx = balance_pairs(stack, line, '{', '}')
         if status:
             # curly braces matched
