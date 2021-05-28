@@ -48,3 +48,18 @@ def balance_pairs(stack, line, first, second):
             close_idx = line.find(second, close_idx + 1)
 
     return False, -1
+
+
+variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\']*)(\s*=\s*([^,;])*)?\s*);'
+assigned_function_pattern = r'\s*(var |let |cont )?\s*\S+\s*=\s*function\s*'
+normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
+functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*' 
+# of course this regex doesn't match only function calls part. regular expressions can't match balanced strings
+# i.e. function calls must have balanced parantheses.we should check that in the code 
+
+declare_reg = re.compile(variable_declaration_pattern) 
+assigned_func_reg = re.compile(assigned_function_pattern)
+normal_func_reg = re.compile(normal_function_pattern)
+func_call_regex = re.compile(functions_call_pattern)
+
+
