@@ -5,6 +5,7 @@ from functions import *
 from shared import *
 from html5print import JSBeautifier
 from function_call import * 
+from functions_copy_back import *
 
 # TODO:
 # 1. fixing the method of saving JS varirables
@@ -117,17 +118,6 @@ if __name__ == '__main__':
     func_calls = dict()
     # status = True
 
-    variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\']*)(\s*=\s*([^,;])*)?\s*);'
-    assigned_function_pattern = r'\s*(var |let |cont )?\s*\S+\s*=\s*function\s*'
-    normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
-    functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*' 
-    # of course this regex doesn't match only function calls part. regular expressions can't match balanced strings
-    # i.e. function calls must have balanced parantheses.we should check that in the code 
-
-    declare_reg = re.compile(variable_declaration_pattern) 
-    assigned_func_reg = re.compile(assigned_function_pattern)
-    normal_func_reg = re.compile(normal_function_pattern)
-    func_call_regex = re.compile(functions_call_pattern)
 
     for line in file_in_tmp:
         # for each line in js code
@@ -171,13 +161,21 @@ if __name__ == '__main__':
 
 
     file_in.close()
-    file_out.close()
     file_in_tmp.close()
+    os.remove(input_tmp_file)
+    functions_tmp.close()
+    functions_tmp = open(functions_tmp_file_name)
+
+    copy_back(functions_tmp, file_out, entry_points, func_calls)   # copying back functions
+
+
 
     print(entry_points)
 
     print(func_calls)
     print(new_file_name)
+    file_out.close()
+    os.remove(functions_tmp_file_name)
 
     subprocess.run(['../expoSE', new_file_name])
 
