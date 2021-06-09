@@ -15,9 +15,15 @@ def check_entry_point(entry_points, variable):
     return False
 
 
-def create_condition_to_check_injection(var):
+def create_condition_to_check_injection(var, strings1=None, strings2=None):
+    if strings1 is not None:
+        for string in strings1:
+            var = var.replace('##', string, 1)
+    if strings2 is not None:
+        for string in strings2:
+            var = var.replace('%%', string, 1)
     conditional = (
-        f'if (String({var}) == "<script>alert(1)</script>") {{',
+        f'if (String({var}).includes("<script>alert(1)</script>")) {{',
         '   throw new Error("XSS!");',
         '}\n'
     )

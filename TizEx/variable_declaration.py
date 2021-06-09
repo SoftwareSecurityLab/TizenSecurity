@@ -24,6 +24,16 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
         # if code starts with var or const or let, remove them. e.g. : var a, b = c = 30, d  ->  a, b = c = 30, d
         declaration_string = declaration_string.replace(match_result.group(1), '')
 
+    # first removing strings. at the end they will be back
+    # by removing the strings it is easier to decide about parts of the declaration strings
+    strings_double_q = re.findall(r'"(?:(?:(?!(?<!\\)").)*)"', declaration_string)
+    for string in strings_double_q:
+        declaration_string = declaration_string.replace(string, '##', 1)
+
+    strings_single_q = re.findall(r"'(?:(?:(?!(?<!\\)').)*)'", declaration_string)
+    for string in strings_single_q:
+        declaration_string = declaration_string.replace(string, '%%', 1)
+
     # declaration_parts a list of variables declared. e.g: a, b = 30, d  ->  ['a', ' b = c = 30', ' d']
     declaration_parts = declaration_string.split(',')
 
@@ -43,7 +53,7 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
             variable = variable.strip()
             if check_entry_point(entry_points, variable):
                 # remove output entries and make a conditional statement instead
-                conditional_string += create_condition_to_check_injection(variables[-1].strip())
+                conditional_string += create_condition_to_check_injection(variables[-1].strip(), strings_double_q, strings_single_q)
                 variables.remove(tmp)
 
         to_print += '='.join(variables)
@@ -56,6 +66,12 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
                 variable = variable.strip()
                 entry_points.append(variable)
         to_print += ' ,'
+
+    for string in strings_double_q:
+        to_print = to_print.replace('##', string, 1)
+    
+    for string in strings_single_q:
+        to_print = to_print.replace('%%', string, 1)
         
     to_print = to_print[:-1] + ';'
     print(to_print + '\n' + conditional_string, file=fout)
