@@ -41,9 +41,20 @@ def init(fin, fout):
 
     initial_code = '''
     var S$ = require('S$');\n
+    class element {
+        constructor(name) {
+            this.name = name;
+            this.innerHTML = new S$.symbol(name + 'html', '');
+            this.innerText = new S$.symbol(name + 'text', '');
+        }
+        addEventListener(event, f) {
+            f(S$.symbol(this.name + event, {}));
+        }
+    }
+
     document = {
         getElementById: function (name) {
-            return S$.symbol(name, {});
+            return new element(name);
         }
     }\n 
     class Promise {
