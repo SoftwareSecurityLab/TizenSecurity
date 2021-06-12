@@ -47,6 +47,15 @@ def copy_back(file_in, file_out, entry_points, func_calls):
     tmp_entry_points = entry_points.copy()
     for line in file_in:
         line = line.strip()
+        
+        line = line.replace('.json()', '')
+
+        if 'fetch' in line:
+            tmp_line = line
+            line = re.sub(r'\bfetch\(', 'fetch({},', line)
+            tmp_line = re.sub(r'\bfetch\(', 'fetch([],', line)
+            line = line + tmp_line
+
         brace_balance += line.count('{')   # according to how functions are stored, in starting function line there should be only one '{'
         brace_balance -= line.count('}')   # and closing function braces is in a new line alone
         if brace_balance == 0:

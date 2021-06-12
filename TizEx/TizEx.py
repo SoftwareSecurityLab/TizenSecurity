@@ -82,13 +82,41 @@ def init(fin, fout):
     };
     Promise.count = 0;
 
-    function fetch(url) {
+    function fetch(type, url) {
+        if (!isEquivalent({}, type) && !isEquivalent('', type) && !isEquivalent(type, []) && !typeof type === 'number' && !typeof type === 'boolean' && !typeof type == 'undefined') {
+            type = {};
+        }
         return new Promise(function(res, rej) {
             res('abc');
             rej('def');
-        })
+        }, type)
     }
 
+    function isEquivalent(a, b) {
+        // Create arrays of property names
+        var aProps = Object.getOwnPropertyNames(a);
+        var bProps = Object.getOwnPropertyNames(b);
+
+        // If number of properties is different,
+        // objects are not equivalent
+        if (aProps.length != bProps.length) {
+            return false;
+        }
+
+        for (var i = 0; i < aProps.length; i++) {
+            var propName = aProps[i];
+
+            // If values of same property are not equal,
+            // objects are not equivalent
+            if (a[propName] !== b[propName]) {
+                return false;
+            }
+        }
+
+        // If we made it this far, objects
+        // are considered equivalent
+        return true;
+    }
     '''
     
     # beautifying code
@@ -127,6 +155,14 @@ if __name__ == '__main__':
         # declaration_result = declare_reg.match(line):
         # if declaration_result:
             # declaration statement
+        line = line.replace('.json()', '')
+
+        if 'fetch' in line:
+            tmp_line = line
+            line = re.sub(r'\bfetch\(', 'fetch({},', line)
+            tmp_line = re.sub(r'\bfetch\(', 'fetch([],', tmp_line)
+            line = line + '\n' + tmp_line
+
         if line.strip().startswith('//'):
             continue
         decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
@@ -177,7 +213,7 @@ if __name__ == '__main__':
     file_out.close()
     os.remove(functions_tmp_file_name)
 
-    subprocess.run(['../expoSE', new_file_name])
+    # subprocess.run(['../expoSE', new_file_name])
 
 
     
