@@ -56,7 +56,7 @@ def balance_pairs(stack, line, first, second):
     return False, -1
 
 
-variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\']*)(\s*=\s*([^,;])*)?\s*);'
+variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\']*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\']*)(\s*=\s*([^,;])*)?\s*);'
 assigned_function_pattern = r'\s*(var |let |cont )?\s*\S+\s*=\s*function\s*'
 normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
 functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*' 

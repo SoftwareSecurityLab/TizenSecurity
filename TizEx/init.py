@@ -1,13 +1,8 @@
 from shared import *
 import subprocess
 
-def init(fin, fout):
-    # fin is the file handler of input stream
+def init(fout):
     # fout is the file handler of output stram
-
-    # writing initial objects to f 
-    if not isinstance(fin, io.IOBase) or not isinstance(fout, io.IOBase):
-        raise ValueError('f must be a file!')
 
     initial_code = '''
     var S$ = require('S$');\n
@@ -99,8 +94,5 @@ def init(fin, fout):
         return true;
     }
     '''
-    
-    # beautifying code
-    subprocess.run(f'html5-print -t js -o tmp {fin.name}'.split())
 
-    print(initial_code, file=fout)
+    print(initial_code, file=fout, flush=True)
