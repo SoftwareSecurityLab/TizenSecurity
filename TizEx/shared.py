@@ -69,3 +69,5 @@ normal_func_reg = re.compile(normal_function_pattern)
 func_call_regex = re.compile(functions_call_pattern)
 
 
+event_file_path = 'events.js'
+

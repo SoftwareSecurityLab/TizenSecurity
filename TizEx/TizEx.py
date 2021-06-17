@@ -6,6 +6,7 @@ from shared import *
 from html5print import JSBeautifier
 from function_call import * 
 from functions_copy_back import *
+from html_events import *
 from init import *
 from bs4 import BeautifulSoup
 import requests
@@ -29,80 +30,19 @@ def get_args():
     args = parser.parse_args()
     
     if args.html:
+        extract_call_backs_html(args.html) # extracts all bounded callback functions in html such as onclick. saves them to a file.
         soup = BeautifulSoup(open(args.html), 'html.parser')
         scripts = soup.select('script')
     elif args.js:
         scripts = [args.js]
 
     return scripts, args.cdns
+
+def copy_file_to_file(from_handler, to_handler):
+    # gets two handlers of files. copies contents of the first one to second
+    for line in from_handler:
+        print(line, file=to_handler, end='')
      
-
-# if __name__ == '__main__':
-#     file_path = get_args()  # path to the file
-#     file_path_ext = os.path.splitext(file_path)
-#     new_file_name = file_path_ext[0] + '_test' + file_path_ext[1]  # new file path to write in
-#     # input_tmp_file = file_path_ext[0] + '_input_test' + file_path_ext[1]  
-#     input_tmp_file = 'tmp'   # original JS code is first beautified and copied in this file
-#     functions_tmp_file_name = file_path_ext[0] + '_test_temp_funcs' + file_path_ext[1] 
-
-#     file_in = open(file_path, 'r')   # original file
-#     file_out = open(new_file_name, 'w')    # new file
-#     functions_tmp = open(functions_tmp_file_name, 'w')
-
-#     init(file_in, file_out)  # this function creates a tmp file which beautified version of original code
-
-#     file_in_tmp = open(input_tmp_file, 'r') 
-
-#     entry_points = ['document']  # can have other variables
-#     func_calls = dict()
-#     # status = True
-
-
-#     for line in file_in_tmp:
-#         # for each line in js code
-#         # it is assumed JS code is a pretty code
-
-#         line = line.replace('.json()', '')
-
-#         if 'fetch' in line:
-#             tmp_line = line
-#             line = re.sub(r'\bfetch\(', 'fetch({},', line)
-#             tmp_line = re.sub(r'\bfetch\(', 'fetch([],', tmp_line)
-#             line = line + '\n' + tmp_line
-
-#         if line.strip().startswith('//'):
-#             continue
-#         decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
-#         func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
-#         if func_res:
-#             pass
-#         elif decalre_res:
-#             pass
-#         else:
-#             print(line, file=file_out)
-
-#         handle_function_call(line, func_call_regex, entry_points, func_calls)
-    
-
-#     file_in.close()
-#     file_in_tmp.close()
-#     os.remove(input_tmp_file)
-#     functions_tmp.close()
-#     functions_tmp = open(functions_tmp_file_name)
-
-#     copy_back(functions_tmp, file_out, entry_points, func_calls)   # copying back functions
-
-
-
-#     print(entry_points)
-
-#     print(func_calls)
-#     print(new_file_name)
-#     file_out.close()
-#     os.remove(functions_tmp_file_name)
-
-#     # subprocess.run(['../expoSE', new_file_name])
-
 
 scripts, cdns = get_args()
 output_file_name = 'Tizex_analyze.js'
@@ -202,6 +142,12 @@ for i in range(len(scripts)):
         functions_tmp = open(functions_tmp_file_name)
 
         copy_back(functions_tmp, file_out, entry_points, func_calls)   # copying back functions
+
+events_file = open(event_file_path)
+copy_file_to_file(events_file, file_out)
+events_file.close()
+os.remove(event_file_path)
+
         
 file_out.close()
 
