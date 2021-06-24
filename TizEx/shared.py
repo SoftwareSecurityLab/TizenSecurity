@@ -18,7 +18,10 @@ def check_entry_point(entry_points, variable):
 def create_condition_to_check_injection(var, strings1=None, strings2=None):
     if strings1 is not None:
         for string in strings1:
-            var = var.replace('##', string, 1)
+            var = var.replace('%$$%', string, 1)
+    # if strings1 is not None:
+    #     for string in strings1:
+    #         var = var.replace('##', string, 1)
     if strings2 is not None:
         for string in strings2:
             var = var.replace('%%', string, 1)
@@ -27,6 +30,8 @@ def create_condition_to_check_injection(var, strings1=None, strings2=None):
         '   throw new Error("XSS!");',
         '}\n'
     )
+
+    '%$$%',
     return '\n'.join(conditional)
 
 

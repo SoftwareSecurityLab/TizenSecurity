@@ -2,6 +2,53 @@ import re
 import io
 from shared import *
 
+
+def handle_quotes(string):
+    # hndles quotes of a string. e.g: string: var a = "abc'de\"fgh"
+    # returns  var a = %$$%  and ["abc'de\"fgh"]
+    
+    status = False # when iterating in string status indicatts current position is in an open quote
+    q = None  # if status is true then the q is either ' or " and is the oened quote
+    strings = list()  # strings in quotes which are replaced in the main strin
+    result = str()    # the result of replacing strings in input string with %$$%
+
+    start = end = None    # start and end index of quotes
+    slash_count = 0    # sometimes it is needed to count slashes before quote. e.g: \\\\\' is not a string quote
+
+    for i in range(len(string)):
+        if string[i] not in '\'"':
+            continue
+
+        j = i   # i is needed
+        while j - 1 >= 0 and string[j - 1] == '\\':
+            slash_count += 1
+            j -= 1
+
+        if slash_count % 2 == 1:
+            slash_count = 0
+            continue
+
+        if not status:
+            status = True
+            start = i
+            q = string[i]
+        elif q == string[i]:
+            status = False
+            end = i
+            strings.append(string[start:end + 1])
+            # string = string.replace(string[start:end + 1], '%$$%', 1)
+        else:
+            # e.g: "abc'dd" when reaching the to '
+            continue
+    
+    for item in strings:
+        string = string.replace(item, '%$$%', 1)
+    
+    return string, strings
+
+
+
+
 def handle_variable_declaration(declaration_string, regex_declaration, entry_points, fin, fout):
     # params:
     # declaration_string is a string of JS variable declaration: e.g: var a, b = c = 30, d;
@@ -26,13 +73,16 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
 
     # first removing strings. at the end they will be back
     # by removing the strings it is easier to decide about parts of the declaration strings
-    strings_double_q = re.findall(r'"(?:(?:(?!(?<!\\)").)*)"', declaration_string)
-    for string in strings_double_q:
-        declaration_string = declaration_string.replace(string, '##', 1)
 
-    strings_single_q = re.findall(r"'(?:(?:(?!(?<!\\)').)*)'", declaration_string)
-    for string in strings_single_q:
-        declaration_string = declaration_string.replace(string, '%%', 1)
+    # strings_double_q = re.findall(r'"(?:(?:(?!(?<!\\)").)*)"', declaration_string)
+    # for string in strings_double_q:
+    #     declaration_string = declaration_string.replace(string, '##', 1)
+
+    # strings_single_q = re.findall(r"'(?:(?:(?!(?<!\\)').)*)'", declaration_string)
+    # for string in strings_single_q:
+    #     declaration_string = declaration_string.replace(string, '%%', 1)
+
+    declaration_string, strings = handle_quotes(declaration_string)
 
     # declaration_parts a list of variables declared. e.g: a, b = 30, d  ->  ['a', ' b = c = 30', ' d']
     declaration_parts = declaration_string.split(',')
@@ -53,7 +103,7 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
             variable = variable.strip()
             if check_entry_point(entry_points, variable):
                 # remove output entries and make a conditional statement instead
-                conditional_string += create_condition_to_check_injection(variables[-1].strip(), strings_double_q, strings_single_q)
+                conditional_string += create_condition_to_check_injection(variables[-1].strip(), strings)
                 variables.remove(tmp)
 
         to_print += '='.join(variables)
@@ -67,12 +117,15 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
                 entry_points.append(variable)
         to_print += ' ,'
 
-    for string in strings_double_q:
-        to_print = to_print.replace('##', string, 1)
+    # for string in strings_double_q:
+    #     to_print = to_print.replace('##', string, 1)
     
-    for string in strings_single_q:
-        to_print = to_print.replace('%%', string, 1)
+    # for string in strings_single_q:
+    #     to_print = to_print.replace('%%', string, 1)
         
+    for string in strings:
+        to_print = to_print.replace('%$$%', string, 1)
+
     to_print = to_print[:-1] + ';'
     print(to_print + '\n' + conditional_string, file=fout)
     return True
