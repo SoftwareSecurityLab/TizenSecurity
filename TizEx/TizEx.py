@@ -28,6 +28,9 @@ def get_args():
     parser.add_argument('--js', help='path to JS file. Ignored if --html is specified.', dest='js')
     parser.add_argument('--cdns', help='specifying cdns to not to check them. list their index in html file starting at 0', dest='cdns', nargs='*', default=[])
     args = parser.parse_args()
+
+    if args.cdns:
+        args.cdns = args.cdns[0].split()
     
     if args.html:
         extract_call_backs_html(args.html) # extracts all bounded callback functions in html such as onclick. saves them to a file.
@@ -35,6 +38,10 @@ def get_args():
         scripts = soup.select('script')
     elif args.js:
         scripts = [args.js]
+
+    args.cdns = list(map(int, args.cdns))
+
+    print(args.cdns)
 
     return scripts, args.cdns
 
@@ -57,19 +64,19 @@ for i in range(len(scripts)):
             # when only js file is specified in args type of script is string
             f = open(script)
             for line in f:
-                print(line, file=output_file)
+                print(line, file=file_out)
         elif script.attrs.get('src'):
             # beautifulSoup obj. a script with src attribute.
             src = script.attrs.get('src')
             if src.startswith('http'):
                 response = requests.get(src).text
-                print(response, file=output_file)
+                print(response, file=file_out)
             else:
                 for line in open(src):
-                    print(line, file=output_file)
+                    print(line, file=file_out)
         else:
             # beautifulSoup objec. a script with code inside a script tag in html
-            print(script.text, file=output_file)
+            print(script.decode_contents(), file=file_out)
     else:
         temporary_file_name = 'temporary_file.js'  # a temporary file for scripts with src
         temporary_file = open(temporary_file_name, 'w')
@@ -142,11 +149,12 @@ for i in range(len(scripts)):
         functions_tmp = open(functions_tmp_file_name)
 
         copy_back(functions_tmp, file_out, entry_points, func_calls)   # copying back functions
-
-events_file = open(event_file_path)
-copy_file_to_file(events_file, file_out)
-events_file.close()
-os.remove(event_file_path)
+        
+if os.path.isfile(event_file_path):
+    events_file = open(event_file_path)
+    copy_file_to_file(events_file, file_out)
+    events_file.close()
+    os.remove(event_file_path)
 
         
 file_out.close()
