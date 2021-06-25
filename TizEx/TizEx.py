@@ -27,10 +27,8 @@ def get_args():
     parser.add_argument('--html', help='path to HTML file.', dest='html')
     parser.add_argument('--js', help='path to JS file. Ignored if --html is specified.', dest='js')
     parser.add_argument('--cdns', help='specifying cdns to not to check them. list their index in html file starting at 0', dest='cdns', nargs='*', default=[])
+    parser.add_argument('--baseUri', help='base uri to read relative paths in html', dest='base', default='')
     args = parser.parse_args()
-
-    if args.cdns:
-        args.cdns = args.cdns[0].split()
     
     if args.html:
         extract_call_backs_html(args.html) # extracts all bounded callback functions in html such as onclick. saves them to a file.
@@ -43,7 +41,7 @@ def get_args():
 
     print(args.cdns)
 
-    return scripts, args.cdns
+    return scripts, args.cdns, args.base
 
 def copy_file_to_file(from_handler, to_handler):
     # gets two handlers of files. copies contents of the first one to second
@@ -51,7 +49,7 @@ def copy_file_to_file(from_handler, to_handler):
         print(line, file=to_handler, end='')
      
 
-scripts, cdns = get_args()
+scripts, cdns, base = get_args()
 output_file_name = 'Tizex_analyze.js'
 file_out = open(output_file_name, 'w')    # new file
 output_file = open(output_file_name, 'w')
@@ -67,11 +65,15 @@ for i in range(len(scripts)):
                 print(line, file=file_out)
         elif script.attrs.get('src'):
             # beautifulSoup obj. a script with src attribute.
-            src = script.attrs.get('src')
-            if src.startswith('http'):
+            src = script.attrs.get('src').strip()
+            if src.startswith('http') or (base and base.startswith('http')):
+                if base and not src.startswith('http'):
+                    src = os.path.join(base, src)
                 response = requests.get(src).text
                 print(response, file=file_out)
             else:
+                if base:
+                    src = os.path.join(base, src)
                 for line in open(src):
                     print(line, file=file_out)
         else:
@@ -86,11 +88,15 @@ for i in range(len(scripts)):
                 print(line, file=temporary_file)
         elif script.attrs.get('src'):
             # script is a bs obj with src
-            src = script.attrs['src']
-            if src.startswith('http'):
+            src = script.attrs['src'].strip()
+            if src.startswith('http') or (base and base.startswith('http')):
+                if base and not src.startswith('http'):
+                    src = os.path.join(base, src)
                 response = requests.get(src).text
                 print(response, file=temporary_file)
             else:
+                if base:
+                    src = os.path.join(base, src)
                 for line in open(src):
                     print(line, file=temporary_file)
         else:
