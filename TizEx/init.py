@@ -20,6 +20,9 @@ def init(fout):
     document = {
         getElementById: function (name) {
             return new element(name);
+        },
+        querySelector: function (name) {
+            return new element(name);
         }
     }\n 
     class Promise {

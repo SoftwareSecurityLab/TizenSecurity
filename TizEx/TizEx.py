@@ -52,7 +52,7 @@ def copy_file_to_file(from_handler, to_handler):
 scripts, cdns, base = get_args()
 output_file_name = 'Tizex_analyze.js'
 file_out = open(output_file_name, 'w')    # new file
-output_file = open(output_file_name, 'w')
+# output_file = open(output_file_name, 'w')
 init(file_out)  # this function creates a tmp file which beautified version of original code
 
 for i in range(len(scripts)):
@@ -104,7 +104,10 @@ for i in range(len(scripts)):
             print(script.decode_contents(), file=temporary_file)
 
         temporary_file.close()
-        file_path = temporary_file_name
+        try:
+            file_path = temporary_file_name
+        except NameError:
+            continue
         # input_tmp_file = file_path_ext[0] + '_input_test' + file_path_ext[1]  
         input_tmp_file = 'tmp'   # original JS code is first beautified and copied in this file
         functions_tmp_file_name = 'TizexAnalyze_functions_tmp'
@@ -115,7 +118,7 @@ for i in range(len(scripts)):
         # beautifying code
         subprocess.run(f'html5-print -t js -o tmp {file_in.name}'.split())
 
-        file_in_tmp = open(input_tmp_file, 'r') 
+        file_in_tmp = open(input_tmp_file, 'r') # output of html5-print
 
         entry_points = ['document']  # can have other variables
         func_calls = dict()
@@ -137,7 +140,7 @@ for i in range(len(scripts)):
             if line.strip().startswith('//'):
                 continue
             decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
-            func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
+            func_res = handle_functions(line, assigned_func_reg, assigned_method_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
             if func_res:
                 pass
             elif decalre_res:

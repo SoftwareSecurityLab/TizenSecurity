@@ -2,9 +2,10 @@ import re
 import io
 from shared import *
 from function_call import *
+from variable_declaration import *
 
 
-def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ffuncs, func_calls, func_call_regex, entry_points):
+def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func_regex, fin, fout, ffuncs, func_calls, func_call_regex, entry_points):
     # params:
     # line: current line which is reading from input file
     # assigned_func_regex: a compiled regex for functions that are assigned to a variable: e.g var a = function(){} 
@@ -29,6 +30,38 @@ def handle_functions(line, assigned_func_regex, normal_func_regex, fin, fout, ff
         return False
 
     stack = list()  # is used to match curly braces
+
+    if assigned_method_reg.match(line):
+        # a method is assigned to a function. e.g: obj.foo = function (...) {...}
+        status, idx = balance_pairs(stack, line, '{', '}')
+        print(line, file=fout)
+        for line in fin:
+            status, idx = balance_pairs(stack, line, '{', '}')
+            if status:
+                # curly braces matched. end of function
+                print(line[:idx + 1], file=ffuncs)
+                return True
+
+            line = line.replace('.json()', '')
+
+            if 'fetch' in line:
+                tmp_line = line
+                line = re.sub(r'\bfetch\(', 'fetch({},', line)
+                tmp_line = re.sub(r'\bfetch\(', 'fetch([],', tmp_line)
+                line = line + '\n' + tmp_line
+
+            if line.strip().startswith('//'):
+                continue
+            decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
+            func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
+            if func_res:
+                pass
+            elif decalre_res:
+                pass
+            else:
+                print(line, file=fout)
+
+            handle_function_call(line, func_call_regex, entry_points, func_calls)
 
     if assigned_func_regex.match(line):
         line = re.sub(r'^\s*(var |const |let )', '', line)
