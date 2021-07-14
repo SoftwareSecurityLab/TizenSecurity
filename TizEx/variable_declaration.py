@@ -41,10 +41,14 @@ def handle_quotes(string):
             # e.g: "abc'dd" when reaching the to '
             continue
     
+    i = 0
+    res = dict()  # a map from number to a string which will be used to replace a string with that
     for item in strings:
-        string = string.replace(item, '%$$%', 1)
+        res[i] = item
+        string = string.replace(item, '%$' + str(i) +'$%', 1)
+        i += 1
     
-    return string, strings
+    return string, res
 
 
 
@@ -123,8 +127,9 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
     # for string in strings_single_q:
     #     to_print = to_print.replace('%%', string, 1)
         
-    for string in strings:
-        to_print = to_print.replace('%$$%', string, 1)
+    pattern = r'%\$(\d+)\$%'   # pattern which will be replaced in string
+    while re.search(pattern, to_print):
+        to_print = re.sub(pattern, lambda x: strings[int(x.group(1))], to_print)
 
     to_print = to_print[:-1] + ';'
     print(to_print + '\n' + conditional_string, file=fout)

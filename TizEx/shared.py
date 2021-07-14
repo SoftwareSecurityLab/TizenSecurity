@@ -15,16 +15,12 @@ def check_entry_point(entry_points, variable):
     return False
 
 
-def create_condition_to_check_injection(var, strings1=None, strings2=None):
-    if strings1 is not None:
-        for string in strings1:
-            var = var.replace('%$$%', string, 1)
-    # if strings1 is not None:
-    #     for string in strings1:
-    #         var = var.replace('##', string, 1)
-    if strings2 is not None:
-        for string in strings2:
-            var = var.replace('%%', string, 1)
+def create_condition_to_check_injection(var, strings):
+    pattern = r'%\$(\d+)\$%'   # pattern which will be replaced in string
+    while re.search(pattern, var):
+        var = re.sub(pattern, lambda x: strings[int(x.group(1))], var)
+        
+
     conditional = (
         f'if (String({var}).includes("<script>alert(1)</script>")) {{',
         '   throw new Error("XSS!");',
