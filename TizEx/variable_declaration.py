@@ -100,8 +100,14 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
 
     for declaration_part in declaration_parts:
         declaration_part = declaration_part.strip()   # e.g : ' d'  ->  'd'
+        
+        declaration_part = declaration_part.replace('==', '%^%')  # there will be a problem when splitting the string with =.
+
         variables = declaration_part.split('=')  # split variables according to =, e.g: b = c = 30  -> ['b ', ' c ', ' 30']
         
+        for i in range(len(variables)):  # replacing %^% with ==
+            variables[i] = variables[i].replace('%^%', '==')
+
         for variable in variables[:-1]:
             tmp = variable   # storing variable in tmp. it is used if we want to remove it from list
             variable = variable.strip()
