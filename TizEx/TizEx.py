@@ -8,6 +8,7 @@ from function_call import *
 from functions_copy_back import *
 from html_events import *
 from init import *
+from end import *
 from bs4 import BeautifulSoup
 import requests
 
@@ -28,6 +29,7 @@ def get_args():
     parser.add_argument('--js', help='path to JS file. Ignored if --html is specified.', dest='js')
     parser.add_argument('--cdns', help='specifying cdns to not to check them. list their index in html file starting at 0', dest='cdns', nargs='*', default=[])
     parser.add_argument('--baseUri', help='base uri to read relative paths in html', dest='base', default='')
+    parser.add_argument('--shuffle', help='how many times events will be shuffled', dest='shuffle', default=1)
     args = parser.parse_args()
     
     if args.html:
@@ -37,11 +39,17 @@ def get_args():
     elif args.js:
         scripts = [args.js]
 
+    try:
+        args.shuffle = int(args.shuffle)   # shuffle should be an integer
+    except ValueError:
+        print('Shuffle should be an integer')
+        exit(-1)
+
     args.cdns = list(map(int, args.cdns))
 
     print(args.cdns)
 
-    return scripts, args.cdns, args.base
+    return scripts, args.cdns, args.base, args.shuffle
 
 def copy_file_to_file(from_handler, to_handler):
     # gets two handlers of files. copies contents of the first one to second
@@ -49,7 +57,7 @@ def copy_file_to_file(from_handler, to_handler):
         print(line, file=to_handler, end='')
      
 
-scripts, cdns, base = get_args()
+scripts, cdns, base, shuffle = get_args()
 output_file_name = 'Tizex_analyze.js'
 file_out = open(output_file_name, 'w')    # new file
 # output_file = open(output_file_name, 'w')
@@ -166,6 +174,8 @@ if os.path.isfile(event_file_path):
     os.remove(event_file_path)
 
         
+
+add_events(file_out, shuffle)
 file_out.close()
 
     
