@@ -27,7 +27,7 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
     assert(isinstance(fout, io.IOBase))
 
     if not assigned_func_regex.match(line) and not normal_func_regex.match(line):
-        return False
+        return False, -1
 
     stack = list()  # is used to match curly braces
 
@@ -40,7 +40,7 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
             if status:
                 # curly braces matched. end of function
                 print(line[:idx + 1], file=ffuncs)
-                return True
+                return True, line[idx + 1]
 
             line = line.replace('.json()', '')
 
@@ -61,7 +61,7 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
             else:
                 print(line, file=fout)
 
-            handle_function_call(line, func_call_regex, entry_points, func_calls)
+            handle_function_call(line, func_call_regex, entry_points, func_calls, file_in, file_out, func_calls)
 
     if assigned_func_regex.match(line):
         line = re.sub(r'^\s*(var |const |let )', '', line)
@@ -74,20 +74,19 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
     status, idx = balance_pairs(stack, line, '{', '}')
     if status:
         print(line[:idx + 1], file=ffuncs)
-        return True
+        return True, line[idx + 1:]
     else:
         print(line, file=ffuncs)
         
 
     # storing everything between two { and } in the temp file
     for line in fin:
-        handle_function_call(line, func_call_regex, entry_points, func_calls)
+        handle_function_call(line, func_call_regex, entry_points, func_calls, fin, fout, func_calls)
         status, idx = balance_pairs(stack, line, '{', '}')
         if status:
             # curly braces matched
             print(line[:idx + 1], file=ffuncs)
-            break
+            return True, line[idx + 1:]
         else:
             # not matched
             print(line, file=ffuncs)
-    return True

@@ -1,6 +1,10 @@
 import os
 import io
 import re
+from string import ascii_letters
+from string import digits as ascii_digits
+from random import choice
+
 
 def check_entry_point(entry_points, variable):
     # checks whether variable is in entry_points or belongs to a variable in entry point
@@ -57,11 +61,23 @@ def balance_pairs(stack, line, first, second):
     return False, -1
 
 
+def create_random_string(l):
+    # l is the length of the random string of characters and digit. its first character will never be a digit
+    assert(type(l) == int)
+    res = choice(ascii_letters)
+    for i in range(l - 1):
+        res += choice(ascii_letters + ascii_digits)
+    
+    return res
+
+
+
 variable_declaration_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)\"]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\'\"]*)(\s*=\s*([^,;])*)?\s*);'
 assigned_function_pattern = r'\s*(var |let |cont )?\s*[\w$]+\s*=\s*function\s*'
 normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
 functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*'
 assigned_method_pattern = r'(\w+\.\w+)*\s*\=\s*function\(.*' 
+anonymous_func_pattern = r'function\(.*\) {'
 # of course this regex doesn't match only function calls part. regular expressions can't match balanced strings
 # i.e. function calls must have balanced parantheses.we should check that in the code 
 
@@ -70,6 +86,7 @@ assigned_func_reg = re.compile(assigned_function_pattern)
 assigned_method_reg = re.compile(assigned_method_pattern)
 normal_func_reg = re.compile(normal_function_pattern)
 func_call_regex = re.compile(functions_call_pattern)
+anonymous_func_regex = re.compile(anonymous_func_pattern)
 
 
 

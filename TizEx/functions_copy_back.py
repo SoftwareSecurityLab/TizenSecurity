@@ -49,6 +49,7 @@ def copy_back(file_in, file_out, entry_points, func_calls):
         line = line.strip()
         
         line = line.replace('.json()', '')
+        line = handle_function_call(line, func_call_regex, entry_points, func_calls, file_in, file_out, func_calls)
 
         if 'fetch' in line:
             tmp_line = line
@@ -86,7 +87,6 @@ def copy_back(file_in, file_out, entry_points, func_calls):
         if not decalre_res:
             print(line, file=file_out)
 
-        handle_function_call(line, func_call_regex, entry_points, func_calls)
 
 
             

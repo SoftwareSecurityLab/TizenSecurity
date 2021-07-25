@@ -147,8 +147,9 @@ for i in range(len(scripts)):
 
             if line.strip().startswith('//'):
                 continue
+            line = handle_function_call(line, func_call_regex, entry_points, func_calls, file_in_tmp, file_out, functions_tmp)
             decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
-            func_res = handle_functions(line, assigned_func_reg, assigned_method_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
+            func_res, _ = handle_functions(line, assigned_func_reg, assigned_method_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
             if func_res:
                 pass
             elif decalre_res:
@@ -156,7 +157,6 @@ for i in range(len(scripts)):
             else:
                 print(line, file=file_out)
 
-            handle_function_call(line, func_call_regex, entry_points, func_calls)
         
 
         file_in.close()

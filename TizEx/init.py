@@ -6,6 +6,7 @@ def init(fout):
 
     initial_code = '''
     var S$ = require('S$');\n
+    var TizEx_events = [];
     class element {
         constructor(name) {
             this.name = name;
@@ -13,7 +14,7 @@ def init(fout):
             this.innerText = new S$.symbol(name + 'text', '');
         }
         addEventListener(event, f) {
-            f(S$.symbol(this.name + event, {}));
+            TizEx_events.push([f, new S$.symbol(this.name + event, {})]);
         }
     }
 
