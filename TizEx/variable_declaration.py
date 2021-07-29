@@ -1,6 +1,8 @@
 import re
 import io
 from shared import *
+import object_handle
+import functions
 
 
 def handle_quotes(string):
@@ -53,7 +55,7 @@ def handle_quotes(string):
 
 
 
-def handle_variable_declaration(declaration_string, regex_declaration, entry_points, fin, fout):
+def handle_variable_declaration(declaration_string, regex_declaration, entry_points, fin, fout, ffunc, func_calls):
     # params:
     # declaration_string is a string of JS variable declaration: e.g: var a, b = c = 30, d;
     # regex_declaration is a compiled regex object with pattern of declaration variables in JS
@@ -63,6 +65,25 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
     
     assert(type(regex_declaration) == re.Pattern)
     assert(type(declaration_string) == str)
+
+
+    while object_assignment_regex.match(declaration_string):
+        if declaration_string.find('function(') == -1:  # object assignment
+            res, rest_of_line = object_handle.handle_objects('{', fin, fout, ffunc, entry_points, func_calls)
+            object_name = create_random_string(6)
+            declaration_string = declaration_string[:declaration_string.rfind('{')] + object_name + rest_of_line
+            print('var ' + object_name + ' = ' + res + '};', file=fout)
+        else: # function assigned to a variable
+            func_name = create_random_string(8)  # creates an 8 character random string is created to name the anonyomous function
+            func_start_idx = declaration_string.rfind('function(')
+            func_declaration = 'function ' + func_name + line[fun_start_idx+8:]
+            status, rest_of_line = functions.handle_functions(func_declaration, assigned_func_reg, assigned_method_reg, normal_func_reg, fin, fout, 
+                            ffunc, func_calls, func_call_regex, entry_points)
+            assert(status is True)
+            line = line[:fun_start_idx] + func_name + rest_of_line
+
+
+
 
     match_result = regex_declaration.match(declaration_string)
     if not match_result:

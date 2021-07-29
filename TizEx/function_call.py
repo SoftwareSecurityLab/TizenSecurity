@@ -1,5 +1,6 @@
 from shared import *
 import functions
+import object_handle
 
 
 def handle_function_call(line, func_call_regex, entry_points, func_calls, fin, fout, ffuncs):
@@ -51,7 +52,12 @@ def handle_function_call(line, func_call_regex, entry_points, func_calls, fin, f
                 line = line[:fun_start_idx] + func_name + rest_of_line
             else:
                 # object as an argument 
-                pass
+                obj, rest_of_line = object_handle.handle_objects('{', fin, fout, ffuncs, entry_points, func_calls)
+                object_name = create_random_string(7)
+                # writing an object declaration in the out put file and replace its name instead of object
+                print('var ' + object_name + ' = ' + obj + '};', file=fout)
+                line = line[:line.rfind('{')] + object_name + rest_of_line
+
             stack = []
             continue
 

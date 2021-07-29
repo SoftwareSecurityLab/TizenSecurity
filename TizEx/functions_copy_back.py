@@ -83,9 +83,11 @@ def copy_back(file_in, file_out, entry_points, func_calls):
         
         if line.strip().startswith('//'):
             continue
-        decalre_res = handle_variable_declaration(line, declare_reg, tmp_entry_points, file_in, file_out)
+        decalre_res = handle_variable_declaration(line, declare_reg, tmp_entry_points, file_in, file_out, file_out, func_calls)
         if not decalre_res:
             print(line, file=file_out)
+
+    
 
 
 

@@ -52,7 +52,7 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
 
             if line.strip().startswith('//'):
                 continue
-            decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out)
+            decalre_res = handle_variable_declaration(line, declare_reg, entry_points, file_in_tmp, file_out, ffunc, func_calls)
             func_res = handle_functions(line, assigned_func_reg, normal_func_reg, file_in_tmp, file_out, functions_tmp, func_calls, func_call_regex, entry_points)
             if func_res:
                 pass

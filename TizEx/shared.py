@@ -78,6 +78,8 @@ normal_function_pattern = r'\s*function\s+\w+\s*\([^)]*\)'
 functions_call_pattern = r'[a-zA-Z_][a-zA-Z0-9_\[\]\'\".]*\(.*'
 assigned_method_pattern = r'(\w+\.\w+)*\s*\=\s*function\(.*' 
 anonymous_func_pattern = r'function\(.*\) {'
+object_assignment_pattern = r'\s*(var |let |const )?(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\'\(\)\"]*)(\s*=\s*([^,;])*)?\s*,)*(\s*([a-zA-Z_$][a-zA-Z0-9_$.\[\]\(\)\'\"]*)(\s*=\s*([^,;])*)?\s*){'
+method_declaration_pattern = r'^\s*\w[\w\d]*\s*:\s*function\s*\([^\)]*\)\s*\{\s*'
 # of course this regex doesn't match only function calls part. regular expressions can't match balanced strings
 # i.e. function calls must have balanced parantheses.we should check that in the code 
 
@@ -87,6 +89,8 @@ assigned_method_reg = re.compile(assigned_method_pattern)
 normal_func_reg = re.compile(normal_function_pattern)
 func_call_regex = re.compile(functions_call_pattern)
 anonymous_func_regex = re.compile(anonymous_func_pattern)
+object_assignment_regex = re.compile(object_assignment_pattern)
+method_declaration_regex = re.compile(method_declaration_pattern)
 
 
 
