@@ -75,12 +75,12 @@ def handle_variable_declaration(declaration_string, regex_declaration, entry_poi
             print('var ' + object_name + ' = ' + res + '};', file=fout)
         else: # function assigned to a variable
             func_name = create_random_string(8)  # creates an 8 character random string is created to name the anonyomous function
-            func_start_idx = declaration_string.rfind('function(')
-            func_declaration = 'function ' + func_name + line[fun_start_idx+8:]
+            fun_start_idx = declaration_string.rfind('function(')
+            func_declaration = 'function ' + func_name + declaration_string[fun_start_idx+8:]
             status, rest_of_line = functions.handle_functions(func_declaration, assigned_func_reg, assigned_method_reg, normal_func_reg, fin, fout, 
                             ffunc, func_calls, func_call_regex, entry_points)
             assert(status is True)
-            line = line[:fun_start_idx] + func_name + rest_of_line
+            declaration_string = declaration_string[:fun_start_idx] + func_name + rest_of_line
 
 
 

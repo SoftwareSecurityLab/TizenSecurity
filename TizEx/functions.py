@@ -81,7 +81,7 @@ def handle_functions(line, assigned_func_regex, assigned_method_reg, normal_func
 
     # storing everything between two { and } in the temp file
     for line in fin:
-        handle_function_call(line, func_call_regex, entry_points, func_calls, fin, fout, func_calls)
+        line = handle_function_call(line, func_call_regex, entry_points, func_calls, fin, fout, ffuncs)
         status, idx = balance_pairs(stack, line, '{', '}')
         if status:
             # curly braces matched

@@ -49,7 +49,7 @@ def copy_back(file_in, file_out, entry_points, func_calls):
         line = line.strip()
         
         line = line.replace('.json()', '')
-        line = handle_function_call(line, func_call_regex, entry_points, func_calls, file_in, file_out, func_calls)
+        line = handle_function_call(line, func_call_regex, entry_points, func_calls, file_in, file_out, file_out)
 
         if 'fetch' in line:
             tmp_line = line
