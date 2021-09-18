@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
 from shared import *
 
-events = ['onclick', 'onmouseover']
+events = ['onclick', 'onmouseover', 'onchange']
+i = 1
 
 def event(element):
     # element is a BeautifulSoup object. this function is a generator which returns all the event attributes
@@ -16,13 +17,25 @@ def event(element):
 
 
 def extract_call_backs_element(element_soup):
-    # gets an element of BeautifulSoup obj. extracts all its event callbacks. and returns them
-    # e.g: element='<div onclick=alert(1) onmouseover=alert(2)></div>' returns a string
-    # -> alert(1);alert(2);
+    # gets an element of BeautifulSoup obj. extracts all its event callbacks. and 
+    # places them in a function. bindes them to an event
+    # e.g: element='<div onclick=alert(1) ></div>' returns a string
+    # -> function html_event_asdfkjg() {this = new S$.symbol("onclick1", {});alert(1);}
+
+    global i
 
     res = ''
     for item in event(element_soup):
-        res += element_soup[item] + ';'
+        func_name = create_random_string(6)
+        js = f'''
+            function html_event_{func_name}(s) {{
+                this = s;
+                {element_soup[item]};
+            }}
+            TizEx_events_js.push([html_event_{func_name}, new S$.symbol("{item}{i}", {{}})]);
+        '''
+        res += js.replace('this', 'this_')
+        i += 1
     return res
 
 def write_to_file(file_handler, string):

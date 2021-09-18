@@ -27,7 +27,7 @@ def create_condition_to_check_injection(var, strings):
 
     conditional = (
         f'if (String({var}).includes("<script>alert(1)</script>")) {{',
-        '   throw new Error("XSS!");',
+        '   throw Error("XSS!");',
         '}\n'
     )
 

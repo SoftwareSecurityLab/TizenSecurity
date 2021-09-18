@@ -1,6 +1,7 @@
 def add_events(fout, times):
     # adds some loops at the end of the code to run events
     js = '''
+    window.onload();
     function shuffle(array) {
         var currentIndex = array.length,  randomIndex;
 
@@ -19,10 +20,11 @@ def add_events(fout, times):
     print(js, file=fout)
     for i in range(times):
         js = '''
-        shuffle(TizEx_events);
-        for (var i = 0; i < TizEx_events.length; i++) {
-            var f = TizEx_events[i][0];
-            var symbolic = TizEx_events[i][1];
+        shuffle(TizEx_events_js);
+        shuffle(TizEx_events_html);
+        for (let i = 0; i < TizEx_events_js.length; i++) {
+            let f = TizEx_events_js[i][0];
+            let symbolic = TizEx_events_js[i][1];
             f(symbolic);
         }
         '''

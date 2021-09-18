@@ -6,15 +6,21 @@ def init(fout):
 
     initial_code = '''
     var S$ = require('S$');\n
-    var TizEx_events = [];
+    var TizEx_events_js = [];      // events bound in js code are pushed here. Those are an array each has two elements. one is function another is input to that function
+    var TizEx_events_html = [];    // events bound in html code are pushed here. an array of functions
+    var window = {
+        onload: function() {}
+    };
+
     class element {
         constructor(name) {
             this.name = name;
             this.innerHTML = new S$.symbol(name + 'html', '');
             this.innerText = new S$.symbol(name + 'text', '');
+            this.value = new S$.symbol(name + 'value', '');
         }
         addEventListener(event, f) {
-            TizEx_events.push([f, new S$.symbol(this.name + event, {})]);
+            TizEx_events_js.push([f, new S$.symbol(this.name + event, {})]);
         }
     }
 
