@@ -1,68 +1,41 @@
-## ExpoSE
+## TizEx
 
-ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](https://www.unibw.de/patch) (now at [Bundeswehr University Munich](https://www.unibw.de/)). 
-ExpoSE supports symbolic execution of Node.js programs and JavaScript in the browser. ExpoSE is based on Jalangi2 and the Z3 SMT solver.
+TizEx is a tool which is used alongside [ExpoSE](https://github.com/ExpoSEJS/ExpoSE), in order to automatically find XSS and HTMLi vulnerabilities in web applications, especially [Tizen](https://www.tizen.org/) application. Tizen is an open-source operating system used in IoT devices. ExpoSE is an application which symbolically executes NodeJS applications.
 
-### Requirements
-
-Requires `node` version v14.16.1 (other versions may work but are not tested), `npm`, `clang` (with `clang++`), `gnuplot` (for coverage graphs), `make`, `python2` (as python in path). On Ubuntu, since python2 has been removed by default I found that you may need to install python3-distutils.
-
-`mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev) is required for electron analysis.
+Web applications can not be analyzed by ExpoSE directly. Because, as it has been said, ExpoSE analyzes NodeJS applications. Web applications are not just some scripts. Even JS scripts used in a web application can't be analyzed using ExpoSE. There are some reasons for that. As an example, they use some data structures such as `document` which are undefined in NodeJS. Also, in order to use ExpoSE to analyze NodeJS codes, symbolic variables should be specified explicitly.
+TizEx does some preprocessing on web application, extracts its JS scripts, extracts its events, and defines data structures in a way that suits the needs for ExpoSE analyzing. Finally, it creates a file which can be used by ExpoSE to analyze if the web application is vulnerable or not.
 
 ### Installation
 
-Execute `npm install` inside the ExpoSE directory for a clean installation.
+In order to run the application, first ExpoSE should be installed. In order to do that, [ExpoSE docs](https://github.com/ExpoSEJS/ExpoSE) can be used.
 
-### ExpoSE GUI
-
-In most cases you want to start by running the ExpoSE dashboard. The GUI provides detailed test case information, easy replay, and coverage graphs. Start the ExpoSE dashboard with
-
-```sh
-$ npm start
+After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the root directory:
+```
+pip install -r TizEx/requirements.txt
 ```
 
-### ExpoSE CLI
+### Usage
 
-Alternatively, you can invoke ExpoSE directly via the `expoSE` command line interface.
+In order to run the program, either HTML or JS file paths should be specified. There are some differences between them. if HTML path is been passed, the program will consider all of the scripts in the specified HTML file. Also bundled events in HTML using some attributes such as `onchange` will be considered. On the other hand, if js path is passed, only the specified JS file will be analyzed.
+Also, if HTML path has been specifed, base URI should be specified, too. It is because of relative paths in HTML files for JS scripts.
+Also, there are two optional parameters. In order to simulate, events on HTML pages, the program shuffles event callback functions and runs them. By default, it will happen only once. It is possible to shuffle functions more than once. Also, it is possible to specify some scripts in HTML file as CDNs, to not to analyze. In order to do that, one can pass script tag number in the order given in HTML code.
 
-Example:
-
-```sh
-$ expoSE ./tests/numbers/infoflow
+```
+--html path/to/html/file   :  HTML file path
+--js path/to/js/file       :  JS file path
+--baseUri                  :  Base URI path
+--cdns                     :  CDNs in HTML file
+--shuffle                  :  Number of shufflings of callback function events
 ```
 
-Valid Options:
+After creating the output file, one can use ExpoSE to find if it is vulnerable to XSS and HTMLi.
 
-* `replay`     - Replay a test case with a specific input.
-* `ahg`        - Automatically generate a generic test harness for a specified NPM library.
 
-### ExpoSE Browser Support
+### Example
 
-There is limited support for symbolic execution of webpages through a custom Electron based web browser. To execute ExpoSE on a website you use the same arguments as the CLI. Note: This also requires python3 and a modern version of mitmproxy to function correctly.
-
-```sh
-$ expoSE "https://google.com"
+There is a web application in `Tizen` dirctory, which is based on a sample of tizen studio web application. It is vulnerable to XSS and HTMLi. In order to analyze it the following command should be run:
 ```
-
-### Configuration
-
-ExpoSE is configured via environment variables. All work both with the ExpoSE GUI and ExpoSE CLI. Typically these can be set from a terminal by writing a command such as
-
-```sh
-$ EXPOSE_LOG_LEVEL=1 expoSE target/hello.js
+python3 TizEx/TizEx.py --html Tizen/index.html --baseUri ~/TizEx/Tizen/ 
 ```
+A new file named `Tizex_analyze.js` will be created. this file can be analyzed by ExpoSE.
 
-* `EXPOSE_MAX_TIME`         - The time (in milliseconds) to limit the total execution
-* `EXPOSE_TEST_TIMEOUT`     - The time (in milliseconds) a test case can run for before being timed out
-* `EXPOSE_PRINT_COVERAGE`   - Print out the files checked by an analysis and show the lines which where explored by the analyzer
-* `EXPOSE_PRINT_PATHS`      - Print the output of each test case to stdout
-* `EXPOSE_LOG_LEVEL`        - Level from 0 (None) to 3 (High)
-* `EXPOSE_MAX_CONCURRENT`   - The maximum number of test cases that can run concurrently
-* `RECOMPILE`               - Force ExpoSE to rebuild before executing scripts
-
-NOTE: To improve performance logging instructions are removed from the output at compile time and so will not be updated if `NO_COMPILE` is set.
-
-### Publications
-
-* Blake Loring, Duncan Mitchell, and Johannes Kinder. [Sound Regular Expression Semantics for Dynamic Symbolic Execution of JavaScript](https://www.unibw.de/patch/papers/pldi19-regex.pdf). In _Proc. ACM SIGPLAN Conf. Programming Language Design and Implementation (PLDI)_, pp. 425–438, ACM, 2019.
-* Blake Loring, Duncan Mitchell, and Johannes Kinder. [ExpoSE: Practical Symbolic Execution of Standalone JavaScript](https://www.unibw.de/patch/papers/spin17-expose.pdf). In _Proc. Int. SPIN Symp. Model Checking of Software (SPIN)_, pp. 196–199, ACM, 2017.
