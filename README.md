@@ -37,5 +37,6 @@ There is a web application in `Tizen` dirctory, which is based on a sample of ti
 ```
 python3 TizEx/TizEx.py --html Tizen/index.html --baseUri ~/TizEx/Tizen/ 
 ```
-A new file named `Tizex_analyze.js` will be created. this file can be analyzed by ExpoSE.
+A new file named `Tizex_analyze.js` will be created. This file can be analyzed by ExpoSE.
+![ExpoSE ScreenShot](/ExpoSE_results.png)
 
