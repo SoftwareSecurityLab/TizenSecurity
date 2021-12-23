@@ -26,7 +26,7 @@ def create_condition_to_check_injection(var, strings):
         
 
     conditional = (
-        f'if (String({var}).includes("<script>alert(1)</script>")) {{',
+        f'if (String({var}).includes("<img src=x onerror=alert(1) />")) {{',
         '   throw Error("XSS!");',
         '}\n'
     )
