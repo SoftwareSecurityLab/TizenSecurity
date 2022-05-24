@@ -45,7 +45,7 @@ Finally after analyzing nodejs code, the result:
 ![ExpoSE ScreenShot](/Web/ExpoSE_results.png)
 
 
-Alternatively, it is possibel to run expose in terminal:
+Alternatively, it is possible to run expose in terminal:
 ```
 ./expose Tizex_analyze.js
 ```
