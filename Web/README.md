@@ -41,6 +41,7 @@ A new file named `Tizex_analyze.js` will be created. This file can be analyzed b
 ```
 ./expose ui
 ```
+Finally after analyzing nodejs code, the result:
 ![ExpoSE ScreenShot](/Web/ExpoSE_results.png)
 
 
