@@ -9,7 +9,8 @@ TizEx does some preprocessing on web application, extracts its JS scripts, extra
 
 In order to run the application, first ExpoSE should be installed. In order to do that, [ExpoSE docs](https://github.com/ExpoSEJS/ExpoSE) can be used.
 
-After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the `/Web` directory of TizenSecurity repository:
+After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the `/Web` directory of TizenSecurity repository (You can change directory by running `cd Web/` in the root of repository):
+
 ```
 pip install -r TizEx/requirements.txt
 ```
