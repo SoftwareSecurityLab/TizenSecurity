@@ -14,9 +14,11 @@ npm install
 ```
 For more information about ExpoSE refer to [ExpoSE docs](https://github.com/ExpoSEJS/ExpoSE).
 
-After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the `/Web` directory of TizenSecurity repository:
+After installing ExpoSE, install TizEx requirements in a virtual environment. To do that run the following command while being in the `/Web` directory of TizenSecurity repository:
 
 ```
+python3 -m venv venv
+source venv/bin/activate
 pip install -r TizEx/requirements.txt
 ```
 
