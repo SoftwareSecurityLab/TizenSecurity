@@ -7,9 +7,14 @@ TizEx does some preprocessing on web application, extracts its JS scripts, extra
 
 ### Installation
 
-In order to run the application, first ExpoSE should be installed. In order to do that, [ExpoSE docs](https://github.com/ExpoSEJS/ExpoSE) can be used.
+In order to run the application, first ExpoSE should be installed. It's got some requiremnets such as `node` version 14.16.1, `npm`, `clang`, `make` and `python2`. Make sure all of them are installed. finally while you are at this directory, i.e. `Web` directory (you can change directory by running `cd Web/` in the root of repository), you need to run the following command in order to install ExpoSE:
 
-After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the `/Web` directory of TizenSecurity repository (You can change directory by running `cd Web/` in the root of repository):
+```
+npm install
+```
+For more information about ExpoSE refer to [ExpoSE docs](https://github.com/ExpoSEJS/ExpoSE).
+
+After installing ExpoSE, install TizEx requirements. To do that run the following command while being in the `/Web` directory of TizenSecurity repository:
 
 ```
 pip install -r TizEx/requirements.txt
@@ -34,9 +39,9 @@ After creating the output file, one can use ExpoSE to find if it is vulnerable t
 
 ### Example
 
-There is a web application in `Tizen` dirctory, which is based on a sample of tizen studio web application. It is vulnerable to XSS and HTMLi. In order to analyze it the following command should be run:
+There is a web application in `Tizen` dirctory, which is based on a sample of tizen studio web application. It is vulnerable to XSS and HTMLi. In order to analyze it the following command should be run (note that your current working directory should be `Web` in TizenSecurity repository):
 ```
-python3 TizEx/TizEx.py --html Tizen/index.html --baseUri ~/TizEx/Tizen/ 
+python3 TizEx/TizEx.py --html Tizen/index.html --baseUri ./Tizen/ 
 ```
 A new file named `Tizex_analyze.js` will be created. This file can be analyzed by ExpoSE. In order to start expose run:
 ```
