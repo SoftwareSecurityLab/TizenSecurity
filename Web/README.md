@@ -7,7 +7,7 @@ TizEx does some preprocessing on web application, extracts its JS scripts, extra
 
 ### Installation
 
-In order to run the application, first ExpoSE should be installed. It's got some requiremnets such as `node` version 14.16.1, `npm`, `clang`, `make` and `python2`. Make sure all of them are installed. finally while you are at this directory, i.e. `Web` directory (you can change directory by running `cd Web/` in the root of repository), you need to run the following command in order to install ExpoSE:
+In order to run the application, first ExpoSE should be installed. It's got some requiremnets such as `node` version 14.16.1, `npm`, `clang`, `make` and `python2`. Also have a SSH key setup for your GitHub account. Otherwise some of the ExpoSE dependencies wouldn't be abele to be downloaded. Make sure all of the requirements are installed. finally while you are at this directory, i.e. `Web` directory (you can change directory by running `cd Web/` in the root of repository), you need to run the following command in order to install ExpoSE:
 
 ```
 npm install
