@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="theId"></div>
+    <input type="text" id="inp">
+    <button id="btn">ok</button>
+    <button id="btn2">ok</button>
+    <script>
+        var a = 0;
+        document.getElementById('btn').addEventListener('click', function () {
+            if (a > 0) {
+                var text = document.getElementById('inp').innerText;
+                if (text[0] == 'a') {
+                    if (text[1] == 'b') {
+                        if (text.slice(-1) == 'x') {
+                            if (!text.includes('XYZ')) {
+                                document.getElementById('theId').innerHTML = text;
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        document.getElementById('btn2').addEventListener('click', function () {
+            a += 1;
+        })
+
+    </script>
+</body>
+
+</html>
