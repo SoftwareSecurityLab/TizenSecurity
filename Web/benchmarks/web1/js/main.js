@@ -1,0 +1,1 @@
+document.getElementById('theId').innerHTML = document.getElementById('inp').innerText
