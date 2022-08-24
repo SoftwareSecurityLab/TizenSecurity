@@ -1,12 +1,16 @@
 
 # SymDynFuzz
 
-Very first steps of Concolic execution engine that auto analysis information flow and fuzz the programs on the actual Tizen device.
+Concolic analysis engine that auto analysis information flow and fuzz the programs on the actual Tizen device.
+
+#Architecture overview
+
+![image](images/Tizen_fuzz_system.png "result")
 
 ## Setup
 1. Install angr-dev:
 
-https://github.com/angr/angr-dev
+    https://github.com/angr/angr-dev
 
 2. `$ workon angr`
 
@@ -16,7 +20,9 @@ https://github.com/angr/angr-dev
 
 5. Set <IP,Port> in symdynfuzz.py.
 
-6. `$ python3 symdynfuzz.py <max-argv-numbers> <max-argv-size>`
+6. Set SSH username and password in symdynfuzz.py and automation.py
+
+7. `$ python3 symdynfuzz.py <max-argv-numbers> <max-argv-size> [<|stdin|argv|>]*`
 
 ## Example
 
@@ -46,6 +52,7 @@ int main(int argc, char** argv)
     }
 }
 ```
-SymDynFuzz results stored in CRASH_REPORT.
+SymDynFuzz results on NIST SARD benchmark C programs are stored in *CRASH_REPORT.txt* file.
 
 ![image](images/output.jpg "result")
+
