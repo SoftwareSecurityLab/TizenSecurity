@@ -12,17 +12,21 @@ Concolic analysis engine that auto analysis information flow and fuzz the progra
 
     https://github.com/angr/angr-dev
 
-2. `$ workon angr`
+2. Execute `$ workon angr`
 
-3. `$ git clone https://github.com/visionius/SymDynFuzz`
+3. Run `$ git clone https://github.com/visionius/SymDynFuzz`
 
-4. `$ cd SymDynFuzz`
+4. Run `$ cd SymDynFuzz`
 
 5. Set <IP,Port> in symdynfuzz.py.
 
-6. Set SSH username and password in symdynfuzz.py and automation.py
+6. Setup SSH server and pass it into `username` and `password` in symdynfuzz.py and automation.py
 
-7. `$ python3 symdynfuzz.py <max-argv-numbers> <max-argv-size> [<|stdin|argv|>]*`
+7. Install Tizen-Studio (install all the requirements for mobile applications). Then add compile options *-no-pie* and *-fno-stack-protector* for gcc compile option in "tizen-studio\tools\ide\resources\native\Build"
+
+8. Copy envfiles/setup.bat and envfiles/compile_install.bat to tizen-studio folder
+
+9. Run `$ python3 symdynfuzz.py <max-argv-numbers> <max-argv-size> [<|stdin|argv|>]*`
 
 ## Example
 
