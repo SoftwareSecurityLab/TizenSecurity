@@ -4,3 +4,7 @@ TizenSecurity is a project by which Tizen native and web applications can be ana
 Web application analysis mainly focuses on XSS and HTML injection while Native application analysis mainly focuses on buffer overflow.
 
 #### For further reading about each type of application analysis, you can explore its related directory in this repository. There is a README file in each one, describing in more details, about how to run the programs.
+
+
+## Article
+For further reading about our tool, an article is published [here](https://www.sciencepg.com/journal/paperinfo?journalid=517&doi=10.11648/j.ijics.20230801.11).
